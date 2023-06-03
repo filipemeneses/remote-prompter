@@ -5,6 +5,7 @@
   import { invokePrompt } from "../fns/ai/comfy/invokePrompt";
   import ImagePreview from "./ImagePreview.svelte";
   import { writeImage } from "tauri-plugin-clipboard-api";
+  import { tauri } from "@tauri-apps/api";
 
   let ipAddress = persisted("ipAddress", "127.0.0.1:8188");
   let denoise = persisted("denoise", "0.7");
@@ -13,6 +14,7 @@
 
   let base64Image;
   let generatedImage;
+  let generatingProgress;
   let isGenerating = false;
   let isExpectingGeneratedImageOnClipboard = false;
 
@@ -29,20 +31,26 @@
     isGenerating = true;
 
     try {
-      const tauriResponse = await invokePrompt(payload);
-      generatedImage = `data:image/png;base64,${tauriResponse.generatedImage}`;
+      const { onProgress, onceDone } = await invokePrompt(payload);
 
-      try {
-        await writeImage(tauriResponse.generatedImage.replace(/=/g, ""));
-      } catch (e) {
-        console.error("failed to write clipboard 2", e);
-      }
+      onProgress(({ progressPercentage }) => {
+        generatingProgress = progressPercentage;
+      });
+      onceDone(async (payload) => {
+        generatedImage = `data:image/png;base64,${payload.generatedImage}`;
+
+        try {
+          await writeImage(payload.generatedImage.replace(/=/g, ""));
+        } catch (e) {
+          console.error("failed to write clipboard:", e);
+        }
+
+        isGenerating = false;
+        isExpectingGeneratedImageOnClipboard = true;
+      });
     } catch (e) {
-      console.error("failed to generate image", e);
+      console.error("failed to generate image:", e);
     }
-
-    isGenerating = false;
-    isExpectingGeneratedImageOnClipboard = true;
   }
 
   function handleOnClipboardChange() {
@@ -112,7 +120,7 @@
     </fieldset>
     <button type="submit" disabled={!base64Image || isGenerating}>
       {#if isGenerating}
-        Generating ...
+        Generating ({generatingProgress ?? 0}%)...
       {:else}
         Generate
       {/if}

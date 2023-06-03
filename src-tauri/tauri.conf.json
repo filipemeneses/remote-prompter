@@ -12,6 +12,16 @@
   },
   "tauri": {
     "allowlist": {
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": [
+          "https://**",
+          "http://**",
+          "ws://**",
+          "wss://**"
+        ]
+      },
       "window": {
         "setAlwaysOnTop": true
       },
