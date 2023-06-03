@@ -1,8 +1,8 @@
 [package]
-name = "tauri-app"
+name = "remote-prompter"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Remotely execute stable diffusion prompts"
+authors = ["https://github.com/filipemeneses"]
 license = ""
 repository = ""
 edition = "2021"
