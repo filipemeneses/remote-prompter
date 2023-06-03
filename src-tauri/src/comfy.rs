@@ -1,3 +1,4 @@
+use reqwest::multipart;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -123,6 +124,29 @@ fn transform_json_to_url(json_str: &str, ip_address: &str) -> String {
 #[derive(Serialize)]
 struct ImageResponse {
     generatedImage: String,
+}
+
+pub async fn send_image(base64_string: &str) -> Result<String, String> {
+    // Convert base64 string to binary
+    let decoded_bytes = base64::decode(base64_string).unwrap();
+
+    // Create a multipart form data
+    let form = multipart::Form::new().part(
+        "image",
+        multipart::Part::bytes(decoded_bytes).file_name("image.jpg"),
+    );
+
+    // Create a request builder and send the binary data
+    let response = Client::new()
+        .post("http://127.0.0.1:8188/upload/image")
+        .multipart(form)
+        .send()
+        .await
+        .unwrap();
+
+    let result = response.text().await.unwrap();
+
+    Ok(result)
 }
 
 pub async fn send_prompt(ip_address: &str, prompt_payload: &str) -> Result<String, String> {
