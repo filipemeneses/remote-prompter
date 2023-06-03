@@ -9,10 +9,12 @@
   let ipAddress = persisted("ipAddress", "127.0.0.1:8188");
   let denoise = persisted("denoise", "0.7");
   let positivePrompt = persisted("positivePrompt", "landscape");
+  let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
 
   let base64Image;
   let generatedImage;
   let isGenerating = false;
+  let isExpectingGeneratedImageOnClipboard = false;
 
   async function generateImage() {
     if (isGenerating) return;
@@ -40,13 +42,30 @@
     }
 
     isGenerating = false;
+    isExpectingGeneratedImageOnClipboard = true;
+  }
+
+  function handleOnClipboardChange() {
+    const isFeatureEnabled = get(isAutoGenerateEnabled);
+
+    if (!isFeatureEnabled) return;
+
+    if (isExpectingGeneratedImageOnClipboard) {
+      isExpectingGeneratedImageOnClipboard = false;
+      return;
+    }
+
+    generateImage();
   }
 </script>
 
 <div>
   <form on:submit|preventDefault={generateImage}>
     <div class="PromptForm__images">
-      <ImageClipboard bind:currentImage={base64Image} />
+      <ImageClipboard
+        bind:currentImage={base64Image}
+        onClipboardChange={handleOnClipboardChange}
+      />
       <ImagePreview
         image={generatedImage}
         missingImageMessage="Generated image will show up here"
@@ -78,6 +97,16 @@
           max="1"
           step="0.01"
           bind:value={$denoise}
+        />
+      </div>
+    </fieldset>
+    <fieldset>
+      <label for="isAutoGenerateEnabled">Auto generate</label>
+      <div class="PromptForm__range">
+        <input
+          id="isAutoGenerateEnabled"
+          type="checkbox"
+          bind:checked={$isAutoGenerateEnabled}
         />
       </div>
     </fieldset>
