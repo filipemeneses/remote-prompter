@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "waygate-ai",
+    "productName": "remote-prompt",
     "version": "0.0.0"
   },
   "tauri": {
