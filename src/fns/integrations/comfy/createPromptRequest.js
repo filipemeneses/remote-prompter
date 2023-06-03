@@ -1,4 +1,5 @@
 export const createPromptRequest = ({
+    checkpoint,
     imageFilename,
     positivePrompt,
     denoise
@@ -35,7 +36,7 @@ export const createPromptRequest = ({
             },
             "4": {
                 "inputs": {
-                    "ckpt_name": "CounterfeitV25_25.safetensors"
+                    "ckpt_name": checkpoint
                 },
                 "class_type": "CheckpointLoaderSimple"
             },
@@ -248,7 +249,7 @@ export const createPromptRequest = ({
                                 "Node name for S&R": "CheckpointLoaderSimple"
                             },
                             "widgets_values": [
-                                "CounterfeitV25_25.safetensors"
+                                checkpoint
                             ]
                         },
                         {

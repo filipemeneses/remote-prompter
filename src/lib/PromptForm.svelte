@@ -5,18 +5,7 @@
   import ImagePreview from "./ImagePreview.svelte";
   import { writeImage } from "tauri-plugin-clipboard-api";
 
-  let denoise = persisted("denoise", "0.7");
-  let positivePrompt = persisted("positivePrompt", "landscape");
-  let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
-
-  let base64Image;
-  let generatedImage;
-  let generatingProgress;
-  let isGenerating = false;
-  let isExpectingGeneratedImageOnClipboard = false;
-
   export let ipAddress;
-
   export let integration = {
     name: "fallback integration",
     invokePrompt(payload) {
@@ -27,10 +16,24 @@
     },
   };
 
+  let checkpoint = persisted("checkpoint", integration.checkpoints[0]);
+
+  let denoise = persisted("denoise", "0.7");
+  let positivePrompt = persisted("positivePrompt", "landscape");
+
+  let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
+
+  let base64Image;
+  let generatedImage;
+  let generatingProgress;
+  let isGenerating = false;
+  let isExpectingGeneratedImageOnClipboard = false;
+
   async function generateImage() {
     if (isGenerating) return;
 
     const payload = {
+      checkpoint: get(checkpoint),
       ipAddress: get(ipAddress),
       base64Image,
       positivePrompt: get(positivePrompt),
@@ -38,6 +41,7 @@
     };
 
     isGenerating = true;
+    generatingProgress = 0;
 
     try {
       const { onProgress, onceDone } = await integration.invokePrompt(payload);
@@ -60,6 +64,8 @@
       });
     } catch (e) {
       console.error("failed to generate image:", e);
+
+      isGenerating = false;
     }
   }
 
@@ -89,6 +95,16 @@
         missingImageMessage="Generated image will show up here"
       />
     </div>
+    <fieldset>
+      <label for="checkpoint">Checkpoint</label>
+      <select id="checkpoint" bind:value={$checkpoint}>
+        {#each integration.checkpoints as checkpoint}
+          <option value={checkpoint}>
+            {checkpoint}
+          </option>
+        {/each}
+      </select>
+    </fieldset>
     <fieldset>
       <label for="positive_prompt">Positive prompt</label>
       <textarea id="positive_prompt" bind:value={$positivePrompt} />
@@ -126,8 +142,9 @@
       </div>
     </fieldset>
     <button
-      class="PromptForm__submit"
       type="submit"
+      class="PromptForm__submit"
+      class:isGenerating
       disabled={!base64Image || isGenerating}
     >
       {#if isGenerating}
@@ -141,7 +158,7 @@
         <div class="PromptForm__range-label">
           {Math.floor((generatingProgress ?? 0) * 100)}%
         </div>
-        {#if generatingProgress === 1}
+        {#if !generatingProgress || generatingProgress === 1}
           <progress aria-busy> 100% </progress>
         {:else}
           <progress
@@ -159,6 +176,9 @@
 
 <style>
   .PromptForm__submit[disabled] {
+    cursor: no-drop;
+  }
+  .PromptForm__submit.isGenerating {
     cursor: progress;
   }
   .PromptForm__images {

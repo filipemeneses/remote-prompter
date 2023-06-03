@@ -9,6 +9,7 @@ export const invokePrompt = async ({
 
     base64Image,
 
+    checkpoint,
     positivePrompt,
     denoise
 }) => {
@@ -37,6 +38,7 @@ export const invokePrompt = async ({
     )
 
     const prompt = createPromptRequest({
+        checkpoint,
         imageFilename: image.data.name,
         positivePrompt,
         denoise,
