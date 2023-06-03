@@ -19,7 +19,14 @@
   let checkpoint = persisted("checkpoint", integration.checkpoints[0]);
 
   let denoise = persisted("denoise", "0.7");
-  let positivePrompt = persisted("positivePrompt", "landscape");
+  let positivePrompt = persisted(
+    "positivePrompt",
+    "landscape, tree, sun, grass, daylight, bloom, unreal engine"
+  );
+  let negativePrompt = persisted(
+    "negativePrompt",
+    "(embedding:bad_prompt_version2:1),(embedding:badhandv4:1),(embedding:easynegative:1)"
+  );
 
   let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
 
@@ -29,6 +36,8 @@
   let isGenerating = false;
   let isExpectingGeneratedImageOnClipboard = false;
 
+  let showMore = false;
+
   async function generateImage() {
     if (isGenerating) return;
 
@@ -37,6 +46,7 @@
       ipAddress: get(ipAddress),
       base64Image,
       positivePrompt: get(positivePrompt),
+      negativePrompt: get(negativePrompt),
       denoise: get(denoise),
     };
 
@@ -109,6 +119,13 @@
       <label for="positive_prompt">Positive prompt</label>
       <textarea id="positive_prompt" bind:value={$positivePrompt} />
     </fieldset>
+    {#if showMore}
+      <fieldset>
+        <label for="negative_prompt">Negative prompt</label>
+        <textarea id="negative_prompt" bind:value={$negativePrompt} />
+      </fieldset>
+    {/if}
+
     <fieldset>
       <label for="denoise">Denoise</label>
       <div class="PromptForm__range">
@@ -131,16 +148,18 @@
         />
       </div>
     </fieldset>
-    <fieldset>
-      <label for="isAutoGenerateEnabled">Auto generate</label>
-      <div class="PromptForm__range">
-        <input
-          id="isAutoGenerateEnabled"
-          type="checkbox"
-          bind:checked={$isAutoGenerateEnabled}
-        />
-      </div>
-    </fieldset>
+    {#if showMore}
+      <fieldset>
+        <label for="isAutoGenerateEnabled">Auto generate</label>
+        <div class="PromptForm__range">
+          <input
+            id="isAutoGenerateEnabled"
+            type="checkbox"
+            bind:checked={$isAutoGenerateEnabled}
+          />
+        </div>
+      </fieldset>
+    {/if}
     <button
       type="submit"
       class="PromptForm__submit"
@@ -171,6 +190,9 @@
         {/if}
       </div>
     {/if}
+    <a href="#" on:click={() => (showMore = !showMore)}>
+      {!showMore ? "Show more" : "Show less"}
+    </a>
   </form>
 </div>
 

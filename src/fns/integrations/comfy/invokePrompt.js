@@ -11,6 +11,7 @@ export const invokePrompt = async ({
 
     checkpoint,
     positivePrompt,
+    negativePrompt,
     denoise
 }) => {
     const promptEndpoint = `http://${ipAddress}/prompt`
@@ -41,6 +42,7 @@ export const invokePrompt = async ({
         checkpoint,
         imageFilename: image.data.name,
         positivePrompt,
+        negativePrompt,
         denoise,
     })
 

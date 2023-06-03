@@ -2,6 +2,7 @@ export const createPromptRequest = ({
     checkpoint,
     imageFilename,
     positivePrompt,
+    negativePrompt,
     denoise
 }) => {
     const prompt = {
@@ -52,7 +53,7 @@ export const createPromptRequest = ({
             },
             "7": {
                 "inputs": {
-                    "text": "(embedding:bad_prompt_version2:1),(embedding:badhandv4:1),(embedding:easynegative:1)",
+                    "text": negativePrompt,
                     "clip": [
                         "4",
                         1
@@ -287,7 +288,7 @@ export const createPromptRequest = ({
                                 "Node name for S&R": "CLIPTextEncode"
                             },
                             "widgets_values": [
-                                "(embedding:bad_prompt_version2:1),(embedding:badhandv4:1),(embedding:easynegative:1)"
+                                negativePrompt
                             ]
                         },
                         {

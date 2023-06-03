@@ -34,6 +34,6 @@
 </script>
 
 <ImagePreview
-  image={`data:image/png;base64,${currentImage}`}
+  image={currentImage ? `data:image/png;base64,${currentImage}` : ""}
   missingImageMessage="Copy a image to clipboard"
 />
