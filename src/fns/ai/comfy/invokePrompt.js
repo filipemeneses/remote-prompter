@@ -2,8 +2,10 @@ import { invoke } from "@tauri-apps/api";
 import { createPromptRequest } from "./createPromptRequest";
 
 export const invokePrompt = async ({
-    base64Image,
     ipAddress,
+
+    base64Image,
+
     positivePrompt,
     denoise
 }) => {
@@ -23,9 +25,7 @@ export const invokePrompt = async ({
 
     const tauriResponse = await invoke("send_prompt", {
         ipAddress,
-        promptEndpoint: `http://${ipAddress}/prompt`,
-        comfyWsEndpoint: `ws://${ipAddress}/ws?clientId=1`,
-        prompt: JSON.stringify(
+        promptPayload: JSON.stringify(
             prompt
         ),
     })
