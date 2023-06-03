@@ -2,9 +2,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use base64;
+use base64::Config;
 use reqwest::multipart;
 use reqwest::Client;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
 use std::{thread, time::Duration};
 use tungstenite::client::connect;
 
@@ -12,6 +15,19 @@ use tungstenite::client::connect;
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! Yo!u've beevn greeted from Rust!", name)
+}
+
+async fn fetch_image_to_base64(image_url: &str) -> String {
+    // Send a GET request to fetch the image
+    let mut response = reqwest::get(image_url).await.unwrap();
+
+    // Read the image data into a byte vector
+    let image_data = response.bytes().await.unwrap();
+
+    // Convert the image data to base64
+    let base64_image = base64::encode(&image_data);
+
+    return base64_image;
 }
 
 async fn comfy_ui_ws_watch_prompt(url: &str, prompt_endpoint: &str, prompt: &str) -> String {
@@ -25,7 +41,26 @@ async fn comfy_ui_ws_watch_prompt(url: &str, prompt_endpoint: &str, prompt: &str
         loop {
             if let Ok(message) = socket.read_message() {
                 if !sent_prompt {
-                    Client::new().post(prompt_endpoint).json(&v).send().await;
+                    let response = Client::new().post(prompt_endpoint).json(&v).send().await;
+
+                    match response {
+                        Ok(resp) => {
+                            if resp.status().is_success() {
+                                let body = resp.text().await.unwrap();
+                                println!("Response body: {}", body);
+                            } else {
+                                println!("{}", prompt);
+                                println!("Request failed with status code: {}", resp.status());
+                                break;
+                            }
+                            // Handle successful response here
+                        }
+                        Err(err) => {
+                            println!("POST request failed: {}", err);
+                            break;
+                            // Handle the error or take necessary action
+                        }
+                    }
                     sent_prompt = true
                 }
                 if let Ok(json) = message.to_text() {
@@ -72,16 +107,64 @@ async fn comfy_ui_ws_watch_prompt(url: &str, prompt_endpoint: &str, prompt: &str
     }
 }
 
+#[derive(Debug, Deserialize)]
+struct JsonData {
+    filename: String,
+    subfolder: String,
+    r#type: String,
+}
+
+fn transform_json_to_url(json_str: &str, ip_address: &str) -> String {
+    // Parse the JSON string into a JsonData struct
+    let json_data: JsonData = serde_json::from_str(json_str).unwrap();
+
+    // Build the URL string using the parsed data
+    let mut url = format!("http://{}/view?", ip_address);
+
+    let mut query_params = HashMap::new();
+    query_params.insert("filename", json_data.filename);
+    query_params.insert("subfolder", json_data.subfolder);
+    query_params.insert("type", json_data.r#type);
+
+    let mut first = true;
+    for (key, value) in query_params {
+        if first {
+            url.push_str(&format!("{}={}", key, value));
+            first = false;
+        } else {
+            url.push_str(&format!("&{}={}", key, value));
+        }
+    }
+
+    url
+}
+
+#[derive(Serialize)]
+struct ImageResponse {
+    generatedImage: String,
+}
+
 #[tauri::command]
 async fn send_prompt(
+    ip_address: &str,
     prompt_endpoint: &str,
     prompt: &str,
     comfy_ws_endpoint: &str,
 ) -> Result<String, String> {
     print!("{}", comfy_ws_endpoint);
     let result: String = comfy_ui_ws_watch_prompt(comfy_ws_endpoint, prompt_endpoint, prompt).await;
+    print!("{}", result);
+    let image_url = transform_json_to_url(&result, ip_address);
+    print!("image_url {}", image_url);
+    let image_b64 = fetch_image_to_base64(&image_url).await;
 
-    Ok(result)
+    let image_response = ImageResponse {
+        generatedImage: image_b64,
+    };
+    // Convert the response to a JSON string
+    let json_string = serde_json::to_string(&image_response).unwrap();
+
+    Ok(json_string)
 }
 
 #[tauri::command]

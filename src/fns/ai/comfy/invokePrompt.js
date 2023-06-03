@@ -4,7 +4,8 @@ import { createPromptRequest } from "./createPromptRequest";
 export const invokePrompt = async ({
     base64Image,
     ipAddress,
-    positivePrompt
+    positivePrompt,
+    denoise
 }) => {
     const image = JSON.parse(
         await invoke("send_image", {
@@ -14,28 +15,31 @@ export const invokePrompt = async ({
 
     const imageFilename = image.name;
 
-    const generatedImage = JSON.parse(
-        await invoke("send_prompt", {
-            promptEndpoint: `${ipAddress}/prompt`,
-            comfyWsEndpoint: ipAddress.replace('http', 'ws') + "/ws?clientId=97f3a147bab945af87d98d49ccd49722",
-            prompt: JSON.stringify(
-                createPromptRequest({
-                    imageFilename,
-                    positivePrompt,
-                })
-            ),
-        })
+    const prompt = createPromptRequest({
+        imageFilename,
+        positivePrompt,
+        denoise,
+    })
+
+    const tauriResponse = await invoke("send_prompt", {
+        ipAddress,
+        promptEndpoint: `http://${ipAddress}/prompt`,
+        comfyWsEndpoint: `ws://${ipAddress}/ws?clientId=1`,
+        prompt: JSON.stringify(
+            prompt
+        ),
+    })
+
+    console.log({
+        tauriResponse
+    })
+
+    const { generatedImage } = JSON.parse(
+        tauriResponse
     );
 
-    const {
-        filename,
-        subfolder,
-        type
-    } = generatedImage
-
-    const comfyUrl = `${ipAddress}/view?filename=${filename}&subfolder=${subfolder}&type=${type}`
-
     return {
-        generatedImage: comfyUrl
+        generatedImage,
+        prompt
     }
 }

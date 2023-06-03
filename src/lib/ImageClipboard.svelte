@@ -5,6 +5,7 @@
   import ImagePreview from "./ImagePreview.svelte";
 
   export let currentImage = null;
+  export let onNewClipboard = () => {};
 
   let tauriImageUnlisten;
   let imageUnlisten;
@@ -12,6 +13,7 @@
   export async function startListening() {
     tauriImageUnlisten = await listen(IMAGE_CHANGED, async (event) => {
       currentImage = event.payload.value;
+      onNewClipboard();
     });
     imageUnlisten = listenImage();
   }
