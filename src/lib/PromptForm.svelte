@@ -92,6 +92,7 @@
       <div class="PromptForm__range">
         <input
           id="denoise"
+          class="PromptForm__range-label"
           type="number"
           min="0"
           max="1"
@@ -118,17 +119,42 @@
         />
       </div>
     </fieldset>
-    <button type="submit" disabled={!base64Image || isGenerating}>
+    <button
+      class="PromptForm__submit"
+      type="submit"
+      disabled={!base64Image || isGenerating}
+    >
       {#if isGenerating}
-        Generating ({generatingProgress ?? 0}%)...
+        Generating ...
       {:else}
         Generate
       {/if}
     </button>
+    {#if isGenerating}
+      <div class="PromptForm__range">
+        <div class="PromptForm__range-label">
+          {Math.floor((generatingProgress ?? 0) * 100)}%
+        </div>
+        {#if generatingProgress === 1}
+          <progress aria-busy> 100% </progress>
+        {:else}
+          <progress
+            max="100"
+            value={Math.floor((generatingProgress ?? 0) * 100)}
+            aria-busy={Number(generatingProgress) === 1 ? "true" : "false"}
+          >
+            {generatingProgress ?? 0}%
+          </progress>
+        {/if}
+      </div>
+    {/if}
   </form>
 </div>
 
 <style>
+  .PromptForm__submit[disabled] {
+    cursor: progress;
+  }
   .PromptForm__images {
     display: flex;
   }
@@ -136,7 +162,7 @@
     display: flex;
     flex-direction: row;
   }
-  .PromptForm__range [type="number"] {
+  .PromptForm__range-label {
     min-width: 80px;
     max-width: 80px;
   }
