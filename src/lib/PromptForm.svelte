@@ -2,12 +2,9 @@
   import { persisted } from "svelte-local-storage-store";
   import ImageClipboard from "./ImageClipboard.svelte";
   import { get } from "svelte/store";
-  import { invokePrompt } from "../fns/ai/comfy/invokePrompt";
   import ImagePreview from "./ImagePreview.svelte";
   import { writeImage } from "tauri-plugin-clipboard-api";
-  import { tauri } from "@tauri-apps/api";
 
-  let ipAddress = persisted("ipAddress", "127.0.0.1:8188");
   let denoise = persisted("denoise", "0.7");
   let positivePrompt = persisted("positivePrompt", "landscape");
   let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
@@ -17,6 +14,18 @@
   let generatingProgress;
   let isGenerating = false;
   let isExpectingGeneratedImageOnClipboard = false;
+
+  export let ipAddress;
+
+  export let integration = {
+    name: "fallback integration",
+    invokePrompt(payload) {
+      return {
+        onProgress(cb) {},
+        onceDone(cb) {},
+      };
+    },
+  };
 
   async function generateImage() {
     if (isGenerating) return;
@@ -31,11 +40,12 @@
     isGenerating = true;
 
     try {
-      const { onProgress, onceDone } = await invokePrompt(payload);
+      const { onProgress, onceDone } = await integration.invokePrompt(payload);
 
       onProgress(({ progressPercentage }) => {
         generatingProgress = progressPercentage;
       });
+
       onceDone(async (payload) => {
         generatedImage = `data:image/png;base64,${payload.generatedImage}`;
 
@@ -82,10 +92,6 @@
     <fieldset>
       <label for="positive_prompt">Positive prompt</label>
       <textarea id="positive_prompt" bind:value={$positivePrompt} />
-    </fieldset>
-    <fieldset>
-      <label for="ip_address">Stable Diffusion UI address </label>
-      <input id="ip_address" bind:value={$ipAddress} />
     </fieldset>
     <fieldset>
       <label for="denoise">Denoise</label>

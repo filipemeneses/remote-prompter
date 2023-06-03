@@ -127,5 +127,4 @@ export const invokePrompt = async ({
         onProgress,
         onceDone
     }
-
 }
