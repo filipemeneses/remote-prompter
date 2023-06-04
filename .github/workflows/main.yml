@@ -1,8 +1,5 @@
 name: 'publish'
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 
 jobs:
   publish-tauri:
@@ -41,7 +38,3 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
