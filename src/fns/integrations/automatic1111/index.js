@@ -3,7 +3,7 @@ import { identifyByIpAddress } from './identifyByIpAddress'
 import { state } from './state'
 
 export default {
-    name: 'ComfyUI',
+    name: 'AUTOMATIC1111',
     invokePrompt,
     identifyByIpAddress,
     get checkpoints() {
@@ -12,9 +12,9 @@ export default {
     get defaults() {
         return {
             get negativePrompt() {
-                return "(embedding:bad_prompt_version2:1),(embedding:badhandv4:1),(embedding:easynegative:1)"
+                return "bad_prompt_version2,badhandv4,easynegative"
             }
         }
     },
-    supports: ['checkpoint']
+    supports: []
 }

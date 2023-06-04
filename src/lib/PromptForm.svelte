@@ -24,8 +24,8 @@
     "landscape, tree, sun, grass, daylight, bloom, unreal engine"
   );
   let negativePrompt = persisted(
-    "negativePrompt",
-    "(embedding:bad_prompt_version2:1),(embedding:badhandv4:1),(embedding:easynegative:1)"
+    integration.name + "_negativePrompt",
+    integration?.defaults?.negativePrompt ?? ""
   );
 
   let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
@@ -105,16 +105,18 @@
         missingImageMessage="Generated image will show up here"
       />
     </div>
-    <fieldset>
-      <label for="checkpoint">Checkpoint</label>
-      <select id="checkpoint" bind:value={$checkpoint}>
-        {#each integration.checkpoints as checkpoint}
-          <option value={checkpoint}>
-            {checkpoint}
-          </option>
-        {/each}
-      </select>
-    </fieldset>
+    {#if integration?.supports?.includes("checkpoint")}
+      <fieldset>
+        <label for="checkpoint">Checkpoint</label>
+        <select id="checkpoint" bind:value={$checkpoint}>
+          {#each integration.checkpoints as checkpoint}
+            <option value={checkpoint}>
+              {checkpoint.getName()}
+            </option>
+          {/each}
+        </select>
+      </fieldset>
+    {/if}
     <fieldset>
       <label for="positive_prompt">Positive prompt</label>
       <textarea id="positive_prompt" bind:value={$positivePrompt} />
