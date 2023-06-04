@@ -1,11 +1,11 @@
 [package]
 name = "remote-prompter"
-version = "0.0.0"
+version = "1.0.0"
 description = "Remotely execute stable diffusion prompts"
 authors = ["https://github.com/filipemeneses"]
 license = ""
-repository = ""
-edition = "2021"
+repository = "https://github.com/filipemeneses/remote-prompter"
+edition = "2023"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
