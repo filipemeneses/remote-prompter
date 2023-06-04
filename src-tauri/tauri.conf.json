@@ -7,8 +7,8 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "remote-prompt",
-    "version": "0.0.0"
+    "productName": "Remote Prompter",
+    "version": "../package.json"
   },
   "tauri": {
     "allowlist": {

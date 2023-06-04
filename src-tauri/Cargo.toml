@@ -5,7 +5,7 @@ description = "Remotely execute stable diffusion prompts"
 authors = ["https://github.com/filipemeneses"]
 license = ""
 repository = "https://github.com/filipemeneses/remote-prompter"
-edition = "2023"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
