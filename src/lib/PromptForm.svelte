@@ -110,7 +110,7 @@
         <label for="checkpoint">Checkpoint</label>
         <select id="checkpoint" bind:value={$checkpoint}>
           {#each integration.checkpoints as checkpoint}
-            <option value={checkpoint}>
+            <option value={checkpoint.raw}>
               {checkpoint.getName()}
             </option>
           {/each}
