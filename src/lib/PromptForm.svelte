@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { persisted } from "svelte-local-storage-store";
   import ImageClipboard from "./ImageClipboard.svelte";
   import { get } from "svelte/store";
@@ -8,10 +8,15 @@
   export let ipAddress;
   export let integration = {
     name: "fallback integration",
-    invokePrompt(payload) {
+    supports: [],
+    checkpoints: [],
+    defaults: {
+      negativePrompt: "",
+    },
+    async invokePrompt(payload) {
       return {
-        onProgress(cb) {},
-        onceDone(cb) {},
+        onProgress(cb: any) {},
+        onceDone(cb: any) {},
       };
     },
   };
@@ -192,7 +197,7 @@
         {/if}
       </div>
     {/if}
-    <a href="#" on:click={() => (showMore = !showMore)}>
+    <a href="#toggle-details" on:click={() => (showMore = !showMore)}>
       {!showMore ? "Show more" : "Show less"}
     </a>
   </form>

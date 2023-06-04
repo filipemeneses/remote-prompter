@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { integrations } from "../fns/integrations";
   import { get } from "svelte/store";
 

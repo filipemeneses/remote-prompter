@@ -13,7 +13,9 @@
   {:else}
     <h4>
       {integration.name} on {$ipAddress}
-      <a href="#" on:click={() => (integration = null)}>Disconnect</a>
+      <a href="#disconnect" on:click={() => (integration = null)}
+        >Disconnect
+      </a>
     </h4>
     <PromptForm bind:integration {ipAddress} />
   {/if}

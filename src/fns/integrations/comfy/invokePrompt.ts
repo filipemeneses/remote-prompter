@@ -1,6 +1,6 @@
-import { createPromptRequest } from "./createPromptRequest";
 import { fetch, Body, ResponseType } from '@tauri-apps/api/http';
 import WebSocket from "tauri-plugin-websocket-api";
+import { createPromptRequest } from "./createPromptRequest";
 import { base64ToArrayBuffer } from "../../b64/base64ToArrayBuffer";
 import { arrayBufferToBase64 } from "../../b64/arrayBufferToBase64";
 

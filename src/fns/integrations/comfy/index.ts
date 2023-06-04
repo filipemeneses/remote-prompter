@@ -17,4 +17,4 @@ export default {
         }
     },
     supports: ['checkpoint']
-}
+} as Integration

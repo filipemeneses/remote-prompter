@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { listen } from "@tauri-apps/api/event";
   import { IMAGE_CHANGED, listenImage } from "tauri-plugin-clipboard-api";
   import { onDestroy, onMount } from "svelte";
@@ -12,7 +12,7 @@
 
   export async function startListening() {
     tauriImageUnlisten = await listen(IMAGE_CHANGED, async (event) => {
-      currentImage = event.payload.value;
+      currentImage = (event.payload as { value: string })?.value;
       onClipboardChange();
     });
     imageUnlisten = listenImage();
