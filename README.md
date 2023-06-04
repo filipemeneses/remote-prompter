@@ -13,10 +13,12 @@ Remotely invoke prompts and get images from clipboard data, allows to use Stable
 # Usage
 
 ## Using copy & paste on Krita
-https://github.com/filipemeneses/remote-prompter/assets/10226292/c4771059-a664-485d-b365-1e26fde5d48c
+
+https://github.com/filipemeneses/remote-prompter/assets/10226292/6fef3f15-08a8-430c-99d0-e75a3fc02789
 
 ## Using screenshot on MSPaint
-https://github.com/filipemeneses/remote-prompter/assets/10226292/7028e348-5978-46e8-84e4-d4111fc7b71d
+https://github.com/filipemeneses/remote-prompter/assets/10226292/a7f5b1b4-3908-40c5-9d60-bcfd1c8030d7
+
 
 # Contributing
 
