@@ -1,4 +1,7 @@
-<div style="text-align:center"><img src="design/logo.png" align="center" height="128" width="128"/><h1>Remote Prompter</h1></div>
+<p align="center">
+  <img src="design/logo.png" align="center" height="128" width="128"/>
+</p>
+<h1 align="center">Remote Prompter</h1>
 
 ---
 
