@@ -1,6 +1,8 @@
-# Remote Prompter
+<div style="text-align:center"><img src="design/logo.png" align="center" height="128" width="128"/><h1>Remote Prompter</h1></div>
 
-[![publish](https://github.com/filipemeneses/remote-prompter/actions/workflows/main.yml/badge.svg)](https://github.com/filipemeneses/remote-prompter/actions/workflows/main.yml)
+---
+
+[![publish](https://github.com/filipemeneses/remote-prompter/actions/workflows/main.yml/badge.svg)](https://github.com/filipevmeneses/remote-prompter/actions/workflows/main.yml)
 
 Remotely invoke prompts and get images from clipboard data, allows to use Stable Diffusion with any (almost) image editor. Supports AUTOMATIC1111 and ComfyUI (with [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui))
 
