@@ -1,4 +1,3 @@
-import sdwebui, { SamplingMethod } from 'node-sd-webui'
 import { img2img } from './img2img'
 
 export const invokePrompt = async ({
