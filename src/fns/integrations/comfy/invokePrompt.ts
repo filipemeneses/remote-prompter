@@ -1,8 +1,9 @@
 import { fetch, Body, ResponseType } from '@tauri-apps/api/http';
 import WebSocket from "tauri-plugin-websocket-api";
-import { createPromptRequest } from "./createPromptRequest";
 import { base64ToArrayBuffer } from "../../b64/base64ToArrayBuffer";
 import { arrayBufferToBase64 } from "../../b64/arrayBufferToBase64";
+import { createPromptRequestSimple } from './createPromptRequestSimple'
+import { createPromptRequestDepthHed } from './createPromptRequestDepthHed'
 
 export const invokePrompt = async ({
     ipAddress,
@@ -12,7 +13,9 @@ export const invokePrompt = async ({
     checkpoint,
     positivePrompt,
     negativePrompt,
-    denoise
+    denoise,
+
+    preset,
 }) => {
     const promptEndpoint = `http://${ipAddress}/prompt`
     const imageUploadAddress = `http://${ipAddress}/upload/image`
@@ -37,6 +40,11 @@ export const invokePrompt = async ({
             body
         }
     )
+
+    const createPromptRequest = {
+        simple: createPromptRequestSimple,
+        depthHed: createPromptRequestDepthHed
+    }[preset] || createPromptRequestSimple
 
     const prompt = createPromptRequest({
         checkpoint,

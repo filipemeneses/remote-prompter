@@ -13,7 +13,7 @@ export const identifyByIpAddress = async (ipAddress) => {
     const rawCheckpoints = nodesData?.CheckpointLoaderSimple?.input?.required?.ckpt_name[0]
     state.checkpoints = rawCheckpoints.map(raw => ({
         raw,
-        getName() {
+        get name () {
             return raw
         }
     }))

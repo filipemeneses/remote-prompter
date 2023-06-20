@@ -9,6 +9,18 @@ export default {
     get checkpoints() {
         return [...state.checkpoints]
     },
+    get presets() {
+        return [
+            {
+                raw: 'simple',
+                name: 'Simple img2img',
+            },
+            {
+                raw: 'depthHed',
+                name: 'Depth + Hed img2img',
+            }
+        ]
+    },
     get defaults() {
         return {
             get negativePrompt() {

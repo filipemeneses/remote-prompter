@@ -13,7 +13,7 @@ export const identifyByIpAddress = async (ipAddress) => {
 
     state.checkpoints = checkpoints.map(raw => ({
         raw,
-        getName() {
+        get name () {
             return raw.title
         }
     }))

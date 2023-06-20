@@ -10,6 +10,7 @@
     name: "fallback integration",
     supports: [],
     checkpoints: [],
+    presets: [],
     defaults: {
       negativePrompt: "",
     },
@@ -21,8 +22,12 @@
     },
   };
 
-  let checkpoint = persisted("checkpoint", integration.checkpoints[0]);
+  let checkpoint = persisted(
+    "checkpoint",
+    integration.checkpoints?.[0]?.raw || ""
+  );
 
+  let preset = persisted("preset", integration?.presets?.[0]?.raw || "");
   let denoise = persisted("denoise", "0.7");
   let positivePrompt = persisted(
     "positivePrompt",
@@ -57,6 +62,7 @@
       positivePrompt: get(positivePrompt),
       negativePrompt: get(negativePrompt),
       denoise: get(denoise),
+      preset: get(preset),
     };
 
     isGenerating = true;
@@ -123,7 +129,19 @@
           <select id="checkpoint" bind:value={$checkpoint}>
             {#each integration.checkpoints as checkpoint}
               <option value={checkpoint.raw}>
-                {checkpoint.getName()}
+                {checkpoint.name}
+              </option>
+            {/each}
+          </select>
+        </fieldset>
+      {/if}
+      {#if integration?.presets}
+        <fieldset>
+          <label for="preset">Presets</label>
+          <select id="preset" bind:value={$preset}>
+            {#each integration.presets as preset}
+              <option value={preset.raw}>
+                {preset.name}
               </option>
             {/each}
           </select>
