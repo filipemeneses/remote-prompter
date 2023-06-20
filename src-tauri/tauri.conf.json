@@ -32,6 +32,9 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "readFile": true
       }
     },
     "bundle": {

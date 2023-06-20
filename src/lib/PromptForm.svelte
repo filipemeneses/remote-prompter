@@ -105,121 +105,140 @@
 </script>
 
 <div>
-  <form on:submit|preventDefault={generateImage}>
-    <div class="PromptForm__images">
+  {#if base64Image}
+    <form on:submit|preventDefault={generateImage}>
+      <div class="PromptForm__images">
+        <ImageClipboard
+          bind:currentImage={base64Image}
+          onClipboardChange={handleOnClipboardChange}
+        />
+        <ImagePreview
+          image={generatedImage}
+          missingImageMessage="Generated image will show up here"
+        />
+      </div>
+      {#if integration?.supports?.includes("checkpoint")}
+        <fieldset>
+          <label for="checkpoint">Checkpoint</label>
+          <select id="checkpoint" bind:value={$checkpoint}>
+            {#each integration.checkpoints as checkpoint}
+              <option value={checkpoint.raw}>
+                {checkpoint.getName()}
+              </option>
+            {/each}
+          </select>
+        </fieldset>
+      {/if}
+      <fieldset>
+        <label for="positive_prompt">Positive prompt</label>
+        <textarea id="positive_prompt" bind:value={$positivePrompt} />
+      </fieldset>
+      {#if showMore}
+        <fieldset>
+          <label for="negative_prompt">Negative prompt</label>
+          <textarea id="negative_prompt" bind:value={$negativePrompt} />
+        </fieldset>
+      {/if}
+
+      <fieldset>
+        <label for="denoise">Denoise</label>
+        <div class="PromptForm__range">
+          <input
+            id="denoise"
+            class="PromptForm__range-label"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            bind:value={$denoise}
+          />
+          <input
+            id="denoise"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            bind:value={$denoise}
+          />
+        </div>
+      </fieldset>
+      {#if showMore}
+        <fieldset>
+          <label for="isAutoGenerateEnabled">Auto generate</label>
+          <div class="PromptForm__range">
+            <input
+              id="isAutoGenerateEnabled"
+              type="checkbox"
+              bind:checked={$isAutoGenerateEnabled}
+            />
+          </div>
+        </fieldset>
+        <fieldset>
+          <label for="isAutoCopyToClipboardEnabled"
+            >Auto copy to clipboard</label
+          >
+          <div class="PromptForm__range">
+            <input
+              id="isAutoCopyToClipboardEnabled"
+              type="checkbox"
+              bind:checked={$isAutoCopyToClipboardEnabled}
+            />
+          </div>
+        </fieldset>
+      {/if}
+      <button
+        type="submit"
+        class="PromptForm__submit"
+        class:isGenerating
+        disabled={!base64Image || isGenerating}
+      >
+        {#if isGenerating}
+          Generating ...
+        {:else}
+          Generate
+        {/if}
+      </button>
+      {#if isGenerating}
+        <div class="PromptForm__range">
+          <div class="PromptForm__range-label">
+            {Math.floor((generatingProgress ?? 0) * 100)}%
+          </div>
+          {#if !generatingProgress || generatingProgress === 1}
+            <progress aria-busy> 100% </progress>
+          {:else}
+            <progress
+              max="100"
+              value={Math.floor((generatingProgress ?? 0) * 100)}
+              aria-busy={Number(generatingProgress) === 1 ? "true" : "false"}
+            >
+              {generatingProgress ?? 0}%
+            </progress>
+          {/if}
+        </div>
+      {/if}
+      <a href="#toggle-details" on:click={() => (showMore = !showMore)}>
+        {!showMore ? "Show more" : "Show less"}
+      </a>
+    </form>
+  {:else}
+    <div class="PromptForm__message">
       <ImageClipboard
         bind:currentImage={base64Image}
         onClipboardChange={handleOnClipboardChange}
       />
-      <ImagePreview
-        image={generatedImage}
-        missingImageMessage="Generated image will show up here"
-      />
     </div>
-    {#if integration?.supports?.includes("checkpoint")}
-      <fieldset>
-        <label for="checkpoint">Checkpoint</label>
-        <select id="checkpoint" bind:value={$checkpoint}>
-          {#each integration.checkpoints as checkpoint}
-            <option value={checkpoint.raw}>
-              {checkpoint.getName()}
-            </option>
-          {/each}
-        </select>
-      </fieldset>
-    {/if}
-    <fieldset>
-      <label for="positive_prompt">Positive prompt</label>
-      <textarea id="positive_prompt" bind:value={$positivePrompt} />
-    </fieldset>
-    {#if showMore}
-      <fieldset>
-        <label for="negative_prompt">Negative prompt</label>
-        <textarea id="negative_prompt" bind:value={$negativePrompt} />
-      </fieldset>
-    {/if}
-
-    <fieldset>
-      <label for="denoise">Denoise</label>
-      <div class="PromptForm__range">
-        <input
-          id="denoise"
-          class="PromptForm__range-label"
-          type="number"
-          min="0"
-          max="1"
-          step="0.01"
-          bind:value={$denoise}
-        />
-        <input
-          id="denoise"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          bind:value={$denoise}
-        />
-      </div>
-    </fieldset>
-    {#if showMore}
-      <fieldset>
-        <label for="isAutoGenerateEnabled">Auto generate</label>
-        <div class="PromptForm__range">
-          <input
-            id="isAutoGenerateEnabled"
-            type="checkbox"
-            bind:checked={$isAutoGenerateEnabled}
-          />
-        </div>
-      </fieldset>
-      <fieldset>
-        <label for="isAutoCopyToClipboardEnabled">Auto copy to clipboard</label>
-        <div class="PromptForm__range">
-          <input
-            id="isAutoCopyToClipboardEnabled"
-            type="checkbox"
-            bind:checked={$isAutoCopyToClipboardEnabled}
-          />
-        </div>
-      </fieldset>
-    {/if}
-    <button
-      type="submit"
-      class="PromptForm__submit"
-      class:isGenerating
-      disabled={!base64Image || isGenerating}
-    >
-      {#if isGenerating}
-        Generating ...
-      {:else}
-        Generate
-      {/if}
-    </button>
-    {#if isGenerating}
-      <div class="PromptForm__range">
-        <div class="PromptForm__range-label">
-          {Math.floor((generatingProgress ?? 0) * 100)}%
-        </div>
-        {#if !generatingProgress || generatingProgress === 1}
-          <progress aria-busy> 100% </progress>
-        {:else}
-          <progress
-            max="100"
-            value={Math.floor((generatingProgress ?? 0) * 100)}
-            aria-busy={Number(generatingProgress) === 1 ? "true" : "false"}
-          >
-            {generatingProgress ?? 0}%
-          </progress>
-        {/if}
-      </div>
-    {/if}
-    <a href="#toggle-details" on:click={() => (showMore = !showMore)}>
-      {!showMore ? "Show more" : "Show less"}
-    </a>
-  </form>
+  {/if}
 </div>
 
 <style>
+  .PromptForm__message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 4rem 0;
+  }
   .PromptForm__submit[disabled] {
     cursor: no-drop;
   }
