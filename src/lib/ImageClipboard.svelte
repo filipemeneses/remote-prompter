@@ -3,6 +3,7 @@
   import { IMAGE_CHANGED, listenImage } from "tauri-plugin-clipboard-api";
   import { onDestroy, onMount } from "svelte";
   import ImagePreview from "./ImagePreview.svelte";
+  import ImageDragDrop from "./ImageDragDrop.svelte";
 
   export let currentImage = null;
   export let onClipboardChange = () => {};
@@ -37,3 +38,5 @@
   image={currentImage ? `data:image/png;base64,${currentImage}` : ""}
   missingImageMessage="Copy a image to clipboard"
 />
+
+<ImageDragDrop />

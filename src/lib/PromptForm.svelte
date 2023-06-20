@@ -34,6 +34,10 @@
   );
 
   let isAutoGenerateEnabled = persisted("isAutoGenerateEnabled", false);
+  let isAutoCopyToClipboardEnabled = persisted(
+    "isAutoCopyToClipboardEnabled",
+    false
+  );
 
   let base64Image;
   let generatedImage;
@@ -69,7 +73,9 @@
         generatedImage = `data:image/png;base64,${payload.generatedImage}`;
 
         try {
-          await writeImage(payload.generatedImage.replace(/=/g, ""));
+          if (get(isAutoCopyToClipboardEnabled)) {
+            await writeImage(payload.generatedImage.replace(/=/g, ""));
+          }
         } catch (e) {
           console.error("failed to write clipboard:", e);
         }
@@ -163,6 +169,16 @@
             id="isAutoGenerateEnabled"
             type="checkbox"
             bind:checked={$isAutoGenerateEnabled}
+          />
+        </div>
+      </fieldset>
+      <fieldset>
+        <label for="isAutoCopyToClipboardEnabled">Auto copy to clipboard</label>
+        <div class="PromptForm__range">
+          <input
+            id="isAutoCopyToClipboardEnabled"
+            type="checkbox"
+            bind:checked={$isAutoCopyToClipboardEnabled}
           />
         </div>
       </fieldset>

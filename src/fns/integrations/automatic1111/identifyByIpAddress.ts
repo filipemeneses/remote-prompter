@@ -5,7 +5,8 @@ import { state } from './state';
 export const identifyByIpAddress = async (ipAddress) => {
     const response = await fetch(`http://${ipAddress}/sdapi/v1/sd-models`, {
         method: 'GET',
-        responseType: ResponseType.JSON
+        responseType: ResponseType.JSON,
+        timeout: 1
     })
 
     const checkpoints = response.data

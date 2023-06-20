@@ -7,11 +7,17 @@
   <div class="ImagePreview__image" style={`background-image: url(${image})`}>
     {#if !image}
       {missingImageMessage}
+    {:else}
+      <img src={image} />
     {/if}
   </div>
 </div>
 
 <style>
+  img {
+    opacity: 0;
+    height: 100%;
+  }
   .ImagePreview__container {
     width: 100%;
     border: 1px solid rgb(82, 82, 82);

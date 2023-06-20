@@ -97,6 +97,8 @@ export const invokePrompt = async ({
         onceDoneCallback = cb
     }
 
+    let isCallbackCalled = false;
+
     const handlers = {
         progress(event) {
             onProgressCallback({
@@ -106,12 +108,13 @@ export const invokePrompt = async ({
             })
         },
         async executed(event) {
-            if (!event?.data?.output?.images?.length) return;
+            if (!event?.data?.output?.images?.length || isCallbackCalled) return;
 
             const generatedImage = await comfyImageJsonToBase64(event.data.output.images[0])
             onceDoneCallback({
                 generatedImage
             })
+            isCallbackCalled = true;
             ws.disconnect()
         }
     }

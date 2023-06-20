@@ -38,7 +38,7 @@
 
     for (let integration of integrations) {
       try {
-        log(`attempting to identificate \`${integration.name}\` ...`);
+        log(`attempting to identify \`${integration.name}\` ...`);
 
         const isValid = await integration.identifyByIpAddress(ipAddressStr);
 
